@@ -10,7 +10,6 @@ __version__ = '5.3.0'  # Python 3.7
 import pdb
 import os, re, sys, subprocess, timeit, glob, copy
 import shutil
-import distutils.spawn
 import itertools
 import bisect
 import argparse
@@ -419,6 +418,7 @@ def write_collapsed_GFF_with_CDS(isoforms_info, input_gff, output_gff):
                     assert e < s
                     s, e = e, s
                     s = s - 1 # make it 0-based
+                # TODO: change the loop to a binary search (reduces complexity)
                 for i,exon in enumerate(r.ref_exons):
                     if exon.end > s: break
                 r.cds_exons = [Interval(s, min(e,exon.end))]
@@ -2445,7 +2445,7 @@ def combine_split_runs(args, split_dirs):
 def main():
     global utilitiesPath
 
-    #arguments
+    # The arguments are divided into categories, based on their functionality to SQANTI3
     parser = argparse.ArgumentParser(description="Structural and Quality Annotation of Novel Transcript Isoforms")
     parser.add_argument('isoforms', help='\tIsoforms (FASTA/FASTQ) or GTF format. It is recommended to provide them in GTF format, but if it is needed to map the sequences to the genome use a FASTA/FASTQ file with the --fasta option.')
     parser.add_argument('annotation', help='\t\tReference annotation file (GTF format)')
